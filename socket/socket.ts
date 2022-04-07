@@ -1,15 +1,16 @@
-const { formatISO } = require("date-fns");
-const { WebSocketServer } = require("ws");
-const { v4: uuidv4 } = require("uuid");
+import { formatISO } from "date-fns";
+import { WebSocketServer } from "ws";
+import { v4 as uuidv4 } from "uuid";
+
 const {
   getUserIdFromConnectionURL,
   parseSocketDataMessage,
 } = require("./utils");
 
-const makeSocket = () => {
+export const makeSocket = () => {
   const wss = new WebSocketServer({ port: 8080 });
 
-  const _broadcast = (msg) => {
+  const _broadcast = (msg: string) => {
     wss.clients.forEach((client) => client.send(msg));
   };
 
@@ -51,5 +52,3 @@ const makeSocket = () => {
     );
   });
 };
-
-module.exports = makeSocket;

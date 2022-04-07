@@ -1,17 +1,17 @@
-const express = require("express");
-const bodyParser = require("body-parser");
+import express from "express";
+import bodyParser from "body-parser";
 
-const rootRouter = require("./routes/rootRouter");
-const { makeApiRouter } = require("./routes/api/apiRouter");
+import rootRouter from "@/routes/rootRouter";
+import { makeApiRouter } from "@/routes/api/apiRouter";
 
-const DB = require("./db/database");
+import DB from "@/db/database";
 
-const makeSocket = require("./socket/socket");
+import { makeSocket } from "@/socket/socket";
 
 const app = express();
 const port = 3001;
 
-const initApp = async () => {
+export const initApp = async () => {
   // parse application/x-www-form-urlencoded
   app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -32,5 +32,3 @@ const initApp = async () => {
     console.log(`Example app listening on port ${port}`);
   });
 };
-
-module.exports = initApp;

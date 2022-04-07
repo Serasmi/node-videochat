@@ -1,11 +1,11 @@
-const { Router } = require("express");
+import { Router } from "express";
 
-const { httpResponseFactory } = require("../../utils");
-const {
-  messagesControllerFactory,
-} = require("../../../controllers/messages/messagesController");
+import { messagesControllerFactory } from "@/controllers/messages/messagesController";
+import { httpResponseFactory } from "@/routes/utils";
 
-const makeMessagesRouter = (messagesDb) => {
+import type { IMessagesDatabase } from "@/db/types";
+
+export const makeMessagesRouter = (messagesDb: IMessagesDatabase) => {
   const router = Router();
   const { deleteMessage, getMessages, patchMessage, postMessage } =
     messagesControllerFactory(messagesDb);
@@ -17,5 +17,3 @@ const makeMessagesRouter = (messagesDb) => {
 
   return router;
 };
-
-module.exports = { makeMessagesRouter };
