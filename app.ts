@@ -18,6 +18,8 @@ export const initApp = async () => {
   // parse application/json
   app.use(bodyParser.json());
 
+  await DB.checkConnect?.();
+
   makeSocket();
 
   // Routes

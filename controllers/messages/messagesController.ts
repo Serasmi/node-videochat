@@ -4,8 +4,11 @@ import type { Request } from "express";
 import type { IControllerResult } from "@/controllers/types";
 import type { IMessagesDatabase } from "@/db/types";
 import type { IMessage } from "@/db/mongo/types";
+import { convertFromMongoObject } from "@/db/mongo/utils";
 
 export const messagesControllerFactory = (db: IMessagesDatabase) => {
+  const _entity = "message";
+
   const headers = {
     "Content-Type": "application/json",
   };
@@ -13,28 +16,30 @@ export const messagesControllerFactory = (db: IMessagesDatabase) => {
   const deleteMessage = async (
     req: Request
   ): Promise<IControllerResult<IMessage>> => {
-    const userId = req.params.id;
+    const { id } = req.params;
 
-    if (!userId) {
-      return handleError<IMessage>(new Error("You must supply a user id."));
+    if (!id) {
+      return handleError<IMessage>(
+        new Error(`You must supply a ${_entity} id.`)
+      );
     }
 
     try {
-      const userToDelete = await db.findById(userId);
+      const entityToDelete = await db.findById(id);
 
-      if (!userToDelete) {
+      if (!entityToDelete) {
         return handleError<IMessage>(
-          new Error("User not found, nothing to delete."),
+          new Error(`No ${_entity} was found, nothing to delete.`),
           { statusCode: 404 }
         );
       }
 
-      const deletedUser = await db.remove(userToDelete);
+      const deletedEntity = await db.remove(entityToDelete);
 
       return {
         headers,
         statusCode: 200,
-        body: deletedUser,
+        body: deletedEntity,
       };
     } catch (e) {
       return handleError(e as Error);
@@ -43,23 +48,41 @@ export const messagesControllerFactory = (db: IMessagesDatabase) => {
 
   const getMessages = async (): Promise<IControllerResult<IMessage[]>> => {
     try {
-      const users = await db.findAll();
+      const entities = await db.findAll();
       return {
         headers,
         statusCode: 200,
-        body: users,
+        body: entities,
       };
     } catch (e) {
       return handleError(e as Error);
     }
   };
 
-  const patchMessage = async (): Promise<IControllerResult<IMessage>> => {
+  const patchMessage = async (
+    req: Request
+  ): Promise<IControllerResult<IMessage>> => {
     // TODO: implement logic here
+    const { id } = req.params;
+    const entity = await db.findById(id);
+    return {
+      headers,
+      statusCode: 200,
+      body: convertFromMongoObject(entity),
+    };
   };
 
-  const postMessage = async (): Promise<IControllerResult<IMessage>> => {
+  const postMessage = async (
+    req: Request
+  ): Promise<IControllerResult<IMessage>> => {
     // TODO: implement logic here
+    const { id } = req.params;
+    const entity = await db.findById(id);
+    return {
+      headers,
+      statusCode: 200,
+      body: convertFromMongoObject(entity),
+    };
   };
 
   return { deleteMessage, getMessages, patchMessage, postMessage };
